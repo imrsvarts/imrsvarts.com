@@ -9,7 +9,7 @@ import ArticlePreview from '../components/article-preview'
 class RootIndex extends React.Component {
   render() {
     const siteTitle = get(this, 'props.data.site.siteMetadata.title')
-    const posts = get(this, 'props.data.allContentfulBlogPost.edges')
+    const posts = get(this, 'props.data.allContentfulArticle.edges')
     const [author] = get(this, 'props.data.allContentfulPerson.edges')
 
     return (
@@ -39,27 +39,25 @@ export default RootIndex
 
 export const pageQuery = graphql`
   query HomeQuery {
-    allContentfulBlogPost(sort: { fields: [publishDate], order: DESC }) {
+    allContentfulArticle(sort: { fields: [publishDate], order: DESC }) {
       edges {
         node {
           title
           slug
           publishDate(formatString: "MMMM Do, YYYY")
-          tags
+          tags {
+            title
+          }
           heroImage {
-            fluid(maxWidth: 350, maxHeight: 196, resizingBehavior: SCALE) {
-             ...GatsbyContentfulFluid_tracedSVG
+            fluid(maxWidth: 350, resizingBehavior: SCALE) {
+              ...GatsbyContentfulFluid_tracedSVG
             }
           }
-          description {
-            childMarkdownRemark {
-              html
-            }
-          }
+          description
         }
       }
     }
-    allContentfulPerson(filter: { contentful_id: { eq: "15jwOBqpxqSAOy2eOO4S0m" } }) {
+    allContentfulPerson(sort: { fields: [name], order: ASC }) {
       edges {
         node {
           name

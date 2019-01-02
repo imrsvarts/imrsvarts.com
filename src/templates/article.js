@@ -7,9 +7,9 @@ import Layout from '../components/layout'
 
 import heroStyles from '../components/hero.module.css'
 
-class BlogPostTemplate extends React.Component {
+class ArticleTemplate extends React.Component {
   render() {
-    const post = get(this.props, 'data.contentfulBlogPost')
+    const post = get(this.props, 'data.contentfulArticle')
     const siteTitle = get(this.props, 'data.site.siteMetadata.title')
 
     return (
@@ -17,7 +17,7 @@ class BlogPostTemplate extends React.Component {
         <div style={{ background: '#fff' }}>
           <Helmet title={`${post.title} | ${siteTitle}`} />
           <div className={heroStyles.hero}>
-            <Img className={heroStyles.heroImage} alt={post.title} fluid={post.heroImage.fluid} />
+            <Img className={heroStyles.heroImage} alt={post.title} fluid={post.heroImage.fluid} placeholderStyle={{ background: 'white' }} />
           </div>
           <div className="wrapper">
             <h1 className="section-headline">{post.title}</h1>
@@ -30,7 +30,7 @@ class BlogPostTemplate extends React.Component {
             </p>
             <div
               dangerouslySetInnerHTML={{
-                __html: post.body.childMarkdownRemark.html,
+                __html: post.body.childContentfulRichText.html,
               }}
             />
           </div>
@@ -40,11 +40,11 @@ class BlogPostTemplate extends React.Component {
   }
 }
 
-export default BlogPostTemplate
+export default ArticleTemplate
 
 export const pageQuery = graphql`
-  query BlogPostBySlug($slug: String!) {
-    contentfulBlogPost(slug: { eq: $slug }) {
+  query ArticleBySlug($slug: String!) {
+    contentfulArticle(slug: { eq: $slug }) {
       title
       publishDate(formatString: "MMMM Do, YYYY")
       heroImage {
@@ -52,8 +52,8 @@ export const pageQuery = graphql`
           ...GatsbyContentfulFluid_tracedSVG
         }
       }
-      body {
-        childMarkdownRemark {
+      body: childContentfulArticleBodyRichTextNode {
+        childContentfulRichText {
           html
         }
       }
