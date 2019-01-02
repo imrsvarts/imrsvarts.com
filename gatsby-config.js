@@ -1,3 +1,7 @@
+const { BLOCKS, MARKS, INLINES } = require('@contentful/rich-text-types')
+const { DEFAULT_LOCALE } = require('./constants')
+const get = require('lodash/get')
+
 let contentfulConfig
 
 try {
@@ -26,9 +30,38 @@ module.exports = {
     'gatsby-transformer-sharp',
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-sharp',
+
     {
       resolve: 'gatsby-source-contentful',
       options: contentfulConfig,
-    }
+    },
+
+    {
+      resolve: '@contentful/gatsby-transformer-contentful-richtext',
+      options: {
+        renderOptions: {
+          renderNode: {
+            [BLOCKS.EMBEDDED_ENTRY]: node => {
+              const contentType = get(node, 'data.target.sys.contentType.sys.id')
+
+              if (contentType !== 'externalMedia') {
+                return ''
+              }
+
+              const {
+                type: { [DEFAULT_LOCALE]: type },
+                identifier: { [DEFAULT_LOCALE]: identifier },
+              } = get(node, 'data.target.fields')
+
+              if (!type || !identifier || type !== 'YouTube') {
+                return ''
+              }
+
+              return `<iframe width="560" height="315" src="https://www.youtube.com/embed/${identifier}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+            },
+          },
+        },
+      },
+    },
   ],
 }
