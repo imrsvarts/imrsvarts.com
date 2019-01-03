@@ -1,4 +1,4 @@
-const { BLOCKS, MARKS, INLINES } = require('@contentful/rich-text-types')
+const { BLOCKS } = require('@contentful/rich-text-types')
 const { DEFAULT_LOCALE } = require('./constants')
 const get = require('lodash/get')
 
